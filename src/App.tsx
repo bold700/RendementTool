@@ -11,6 +11,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { AdvancedCalculator } from './components/AdvancedCalculator';
 import { HuurpuntenCalculator } from './components/HuurpuntenCalculator';
+import { CompoundCalculator } from './components/CompoundCalculator';
 
 // Material Symbols icon component
 const MaterialIcon = ({ name, size = 32, color, filled = false }: { name: string; size?: number; color?: string; filled?: boolean }) => (
@@ -36,6 +37,10 @@ const navItems = [
   {
     label: 'Huurpunten', 
     iconName: 'home',
+  },
+  {
+    label: 'Compound',
+    iconName: 'trending_up',
   },
 ];
 
@@ -320,43 +325,99 @@ function useMaterialTheme() {
 }
 
 function App() {
-  const [tab, setTab] = useState(0);
+  const [value, setValue] = useState(0);
   const theme = useMaterialTheme();
-  const isDesktop = useMediaQuery('(min-width:600px)');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const renderContent = () => {
+    switch (value) {
+      case 0:
+        return <AdvancedCalculator />;
+      case 1:
+        return <HuurpuntenCalculator />;
+      case 2:
+        return <CompoundCalculator />;
+      default:
+        return <AdvancedCalculator />;
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box display="flex" minHeight="100vh">
-        {/* Main content */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          bgcolor: 'background.default',
+        }}
+      >
+        {/* Top navigatiebalk voor desktop/tablet */}
         <Box
-          flex={1}
-          p={{ xs: 1, sm: 4 }}
-          pb={{ xs: isDesktop ? 0 : 10, sm: 0 }}
-          mt={isDesktop ? 7 : 0}
-        >
-          {tab === 0 && <AdvancedCalculator />}
-          {tab === 1 && <HuurpuntenCalculator />}
-        </Box>
-        {/* Navigation bar: top op desktop, bottom op mobiel */}
-        <Box
-          position="fixed"
-          left={0}
-          right={0}
-          zIndex={1200}
-          top={isDesktop ? 0 : 'auto'}
-          bottom={isDesktop ? 'auto' : 0}
+          sx={{
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            top: 0,
+            zIndex: 1200,
+            display: { xs: 'none', sm: 'flex' },
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
         >
           <BottomNavigation
-            value={tab}
-            onChange={(_, v) => setTab(v)}
+            value={value}
+            onChange={(_, v) => setValue(v)}
             showLabels
+            sx={{ width: '100%', bgcolor: 'transparent' }}
           >
             {navItems.map((item, idx) => (
               <BottomNavigationAction
                 key={item.label}
                 label={item.label}
-                icon={<MaterialIcon name={item.iconName} size={28} filled={tab === idx} />}
+                icon={<MaterialIcon name={item.iconName} size={28} filled={value === idx} />}
+              />
+            ))}
+          </BottomNavigation>
+        </Box>
+
+        <Box
+          component="main"
+          flex={1}
+          p={{ xs: 1, sm: 4 }}
+          pb={{ xs: isMobile ? 10 : 0, sm: 0 }}
+          mt={isMobile ? 7 : 8}
+        >
+          {renderContent()}
+        </Box>
+
+        {/* Bottom navigatiebalk voor mobiel */}
+        <Box
+          sx={{
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 1200,
+            display: { xs: 'flex', sm: 'none' },
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          <BottomNavigation
+            value={value}
+            onChange={(_, v) => setValue(v)}
+            showLabels
+            sx={{ width: '100%', bgcolor: 'transparent' }}
+          >
+            {navItems.map((item, idx) => (
+              <BottomNavigationAction
+                key={item.label}
+                label={item.label}
+                icon={<MaterialIcon name={item.iconName} size={28} filled={value === idx} />}
               />
             ))}
           </BottomNavigation>
