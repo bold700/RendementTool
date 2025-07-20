@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import { AdvancedCalculator } from './components/AdvancedCalculator';
 import { HuurpuntenCalculator } from './components/HuurpuntenCalculator';
 import { CompoundCalculator } from './components/CompoundCalculator';
+import { LeaseCalculator } from './components/LeaseCalculator';
 
 // Material Symbols icon component
 const MaterialIcon = ({ name, size = 32, color, filled = false }: { name: string; size?: number; color?: string; filled?: boolean }) => (
@@ -41,6 +42,10 @@ const navItems = [
   {
     label: 'Compound',
     iconName: 'trending_up',
+  },
+  {
+    label: 'Lease',
+    iconName: 'directions_car',
   },
 ];
 
@@ -337,6 +342,8 @@ function App() {
         return <HuurpuntenCalculator />;
       case 2:
         return <CompoundCalculator />;
+      case 3:
+        return <LeaseCalculator />;
       default:
         return <AdvancedCalculator />;
     }
